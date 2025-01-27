@@ -80,21 +80,20 @@
                     let submit = document.getElementById("submit");
                     tg.expand();
 
-
                     submit.addEventListener("click", (event) => {
                         event.preventDefault(); // предотвращаем отправку формы
-                        let sail_name = document.getElementById("sail_name").value;
+                        let client_sait = document.getElementById("client_sait").value;
 
-                        if (sail_name.length < 5) {
-                            document.getElementById("error").innerText = "Название продажи должно содержать минимум 5 символов.";
+                        if (client_sait.length < 5) {
+                            document.getElementById("error").innerText = "Ваше имя должно содержать минимум 5 символов.";
                             return; // не продолжаем выполнение, если условие истинно
                         }
 
                         let data = {
-                            sail_name: sail_name
+                            client_sait: client_sait
                         };
                 
-                        tg.sendData(JSON.stringify(data)); // исправлено: используется правильная переменная
+                        tg.sendData(JSON.stringify(data)); // отправка данных в Telegram WebApp
                         tg.close(); // закрываем веб-приложение
                     });
                 </script>
