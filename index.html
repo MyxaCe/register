@@ -66,10 +66,22 @@
     </head>
     <body>
         <div id="main">
-                <form id="form">
-                    <label for="client_sait">Ваше имя:</label>
+                <form id="form" autocomplete="off">
+                    <label for="client_sait">Сайт клиента:</label>
+                    <input type="text" id="client_sait" name="client_sait"><br>
+
+                    <label for="date">Дата:</label>
+                    <input type="date" id="date" name="date"><br>
+
+                    <label for="client_name">Имя клиента:</label>
+                    <input type="text" id="client_name" name="client_name"><br>
+
+                    <label for="client_tg">Telegram клиента:</label>
+                    <input type="text" id="client_tg" name="client_tg"><br>
+
+                    <label for="sail_name">Название продажи:</label>
                     <input type="text" id="sail_name" name="sail_name"><br>
-                    
+
                     <div id="error" style="color: red;"></div>
                     <button type="button" id="submit">Submit</button>
                 </form>
@@ -79,22 +91,84 @@
                     let tg = window.Telegram.WebApp;
                     let submit = document.getElementById("submit");
                     tg.expand();
+                    
+                    window.addEventListener('load', () => {
+                        const today = new Date();
+                        const year = today.getFullYear();
+                        const month = String(today.getMonth() + 1).padStart(2, '0');
+                        const day = String(today.getDate()).padStart(2, '0');
+                        document.getElementById("date").value = `${year}-${month}-${day}`;
+                    });
 
-                    submit.addEventListener("click", (event) => {
+                    function handleSubmit(event) {
                         event.preventDefault(); // предотвращаем отправку формы
+                        let client_sait = document.getElementById("client_sait").value;
+                        let date = document.getElementById("date").value;
+                        let client_name = document.getElementById("client_name").value;
+                        let client_tg = document.getElementById("client_tg").value;
                         let sail_name = document.getElementById("sail_name").value;
+                        
+                        const tgPattern = /^(https:\/\/t\.me\/[a-zA-Z0-9_]+|7\d{10}|Скрыт)$/;
+
+                        if (client_sait.length < 5) {
+                            document.getElementById("error").innerText = "Сайт клиента должен содержать минимум 5 символов.";
+                            return; // не продолжаем выполнение, если условие истинно
+                        }
+
+                        if (!date) {
+                            const today = new Date();
+                            const year = today.getFullYear();
+                            const month = String(today.getMonth() + 1).padStart(2, '0');
+                            const day = String(today.getDate()).padStart(2, '0');
+                            date = `${year}-${month}-${day}`;
+                            document.getElementById("date").value = date;
+                        }
+                
+                        const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+                        if (!datePattern.test(date)) {
+                            document.getElementById("error").innerText = "Дата должна быть в формате YYYY-MM-DD.";
+                            return; // не продолжаем выполнение, если условие истинно
+                        }
+                
+                        const parsedDate = new Date(date);
+                        if (isNaN(parsedDate.getTime())) {
+                            document.getElementById("error").innerText = "Некорректная дата.";
+                            return; // не продолжаем выполнение, если условие истинно
+                        }
+                        
+                        if (client_name.length < 5) {
+                            document.getElementById("error").innerText = "Имя клиента должно содержать минимум 5 символов.";
+                            return; // не продолжаем выполнение, если условие истинно
+                        }
+
+                        if (!tgPattern.test(client_tg)) {
+                        document.getElementById("error").innerText = "Telegram клиента должен быть в формате https://t.me/username, номер телефона в формате 79000000000 или 'Скрыт'.";
+                        return; // не продолжаем выполнение, если условие истинно
+                        }
 
                         if (sail_name.length < 5) {
-                            document.getElementById("error").innerText = "Ваше имя должно содержать минимум 5 символов.";
+                            document.getElementById("error").innerText = "Название продажи должно содержать минимум 5 символов.";
                             return; // не продолжаем выполнение, если условие истинно
                         }
 
                         let data = {
+                            client_sait: client_sait,
+                            date: date,
+                            client_name: client_name,
+                            client_tg: client_tg,
                             sail_name: sail_name
                         };
                 
-                        tg.sendData(JSON.stringify(data)); // отправка данных в Telegram WebApp
+                        tg.sendData(JSON.stringify(data)); // исправлено: используется правильная переменная
                         tg.close(); // закрываем веб-приложение
+                    }
+
+                    submit.addEventListener("click", handleSubmit);
+
+                    document.getElementById("form").addEventListener("keypress", (event) => {
+                        if (event.key === "Enter") {
+                            handleSubmit(event);
+                        }
                     });
                 </script>
     </body>
