@@ -67,8 +67,8 @@
     <body>
         <div id="main">
                 <form id="form" autocomplete="off">
-                    <label for="client_sait">Ваше имя:</label>
-                    <input type="text" id="client_sait" name="client_sait" autocomplete="off"><br>
+                    <label for="sail_name">Ваше имя:</label>
+                    <input type="text" id="sail_name" name="sail_name" autocomplete="off"><br>
                     
                     <div id="error" style="color: red;"></div>
                     <button type="button" id="submit">Submit</button>
@@ -82,16 +82,16 @@
 
                     submit.addEventListener("click", (event) => {
                         event.preventDefault(); // предотвращаем отправку формы
-                        let client_sait = document.getElementById("client_sait").value;
+                        let sail_name = document.getElementById("sail_name").value;
 
-                        if (client_sait.length < 5) {
+                        if (sail_name.length < 5) {
                             document.getElementById("error").innerText = "Ваше имя должно содержать минимум 5 символов.";
                             return; // не продолжаем выполнение, если условие истинно
                         }
 
                         let data = {
                             action: "register_user",
-                            client_sait: client_sait
+                            sail_name: sail_name
                         };
                 
                         tg.sendData(JSON.stringify(data)); // отправка данных в Telegram WebApp
